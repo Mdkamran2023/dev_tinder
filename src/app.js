@@ -28,6 +28,26 @@ app.patch("/about",(req,res)=>{
     res.send("This is the about patch page");
 });
 
+app.get("/ab*cd",(req,res)=>{
+    res.send("This is the about wildcard page");
+});
+
+
+
+//dynamic route parameters
+app.get("/user/:id/:name/:password",(req,res)=>{
+    console.log("User ID: " + req.params.id);
+    console.log("User Name: " + req.params.name);
+    console.log("User Password: " + req.params.password);
+    res.send("This is the user page with dynamic route parameters");
+});
+
+// query parameters
+app.get("/user",(req,res)=>{
+    console.log(req.query);
+    res.send("This is the user page");
+});
+
 app.use("/about",(req,res)=>{
     res.send("This is the about page");
 });
