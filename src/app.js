@@ -22,6 +22,19 @@ app.use("/user", (req, res, next) => {
 });
 
 
+app.get("/aboutuser",(req,res,next)=>{
+    console.log("Handler 2: aboutuser route");
+    // res.send("This is the second for aboutuser route"); 
+    // next();// allowed but avoid sending again in downstream handlers
+});
+
+app.get("/aboutuser",(req,res,next)=>{
+    console.log("Handler 1: aboutuser route");
+    res.send("Hello from aboutuser route");
+    next(); // allowed but avoid sending again in downstream handlers
+});
+
+
 
 app.listen(7777,()=>{
     console.log("Server is running on port 7777 ...");
