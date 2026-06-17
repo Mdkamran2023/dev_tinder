@@ -1,17 +1,11 @@
 const express = require('express'); //importing the express module
 const app= express(); //creating an instance of express application
 
+const {authMiddleware}= require('./middlewares/auth'); //importing the auth middleware from the middlewares folder
+
 //middlewares 
-app.use('/admin',(req,res,next)=>{
-    console.log("Admin middleware is running...");
-    const token = "xyz123"; //dummy token for authentication
-    const isAdminAuthorized= token === "xyz123"; //checking if the token is valid
-    if(isAdminAuthorized){
-        next(); //if authorized, proceed to the next middleware or route handler
-    } else{
-        res.status(403).send("Access denied. Admins only."); //if not authorized, send a 403 Forbidden response
-    }
-});
+app.use('/admin',authMiddleware); //applying the auth middleware to all routes starting with /admin
+
 
 //routes
 app.get("/admin/getAllUsers",(req,res)=>{
