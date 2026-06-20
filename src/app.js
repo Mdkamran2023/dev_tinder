@@ -1,20 +1,29 @@
 const express = require('express'); //importing the express module
 const app= express(); //creating an instance of express application
 
-const {authMiddleware}= require('./middlewares/auth'); //importing the auth middleware from the middlewares folder
+// app.get("/getUserData",(req,res)=>{
+//     throw new Error("This is a test error");
+//     res.send("User data fetched successfully");
+// });
 
-//middlewares 
-app.use('/admin',authMiddleware); //applying the auth middleware to all routes starting with /admin
+app.get("/getUserData",(req,res,next)=>{
+    try{
+        throw new Error("This is a test error");
+        res.send("User data fetched successfully");
+    }
+    catch(err){
+        res.status(500).send("Internal Server Error: "+err.message);    
+    }
+})
 
-
-//routes
-app.get("/admin/getAllUsers",(req,res)=>{
-    res.send("List of all users..."); //sending a response with the list of all users
+// wildcard route to handle errors
+app.use("/",(err,req,res,next)=>{
+    res.status(500).send("Internal Server Error: "+err.message);
 });
 
-app.get("/admin/deleteUser",(req,res)=>{
-    res.send("User deleted successfully..."); //sending a response indicating that the user has been deleted
-});
+
+
+
 
 
 app.listen(7777,()=>{
