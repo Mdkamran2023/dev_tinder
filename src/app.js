@@ -3,15 +3,16 @@ const {connectDB}=require('./config/database'); //importing the database configu
 const app= express(); //creating an instance of express application
 const {User}= require('./models/user'); //importing the user model
 
+
+ app.use(express.json()); //middleware to parse incoming JSON requests ,
+//  this allows uss to access the request body as a Javascript object in our route handlers.
+
 app.post('/signup', async(req,res)=>{
+
+    console.log(req.body);//logging the request body to the console for debugging purposes
    
         //creating a new user instance using the user model 
-        const userInstance= new User({
-            firstName:"shaya",
-            lastName:"Sharmi",
-            emailId:"akshay.sharma@gmail.com",
-            password:"password123"
-        });
+        const userInstance= new User(req.body);
          try{
         //saving the user instance to the database
         await userInstance.save();
