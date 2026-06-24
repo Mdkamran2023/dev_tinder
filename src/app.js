@@ -28,6 +28,40 @@ app.get('/user',async(req,res)=>{
     
 });
 
+//route to delete user data based on userId
+app.delete('/user',async(req,res)=>{
+    const userId= req.body.userId; //getting the userId from the request body
+    try{
+        const deletedUser= await User.findByIdAndDelete({_id:userId});
+        if(!deletedUser){
+            res.status(404).send("No user found with the provided userId");//if no user is found, send a 404 Not Found response
+        }else{
+            res.send({message: "User deleted successfully", deletedUser});
+        }
+
+    }catch(err){
+        res.status(500).send("Error deleting user data:",err);
+    }
+})
+
+//route to update user data based on userId
+app.patch("/user",async(req,res)=>{
+    const userId= req.body.userId; // getting the userId
+    const updateData=req.body; // getting the data to be updated
+    try{
+        const updateUser= await User.findByIdAndUpdate({_id:userId},updateData,{returnDocument:"after"}); //updating the user data and returning the updated document
+        console.log(updateUser);
+        if(!updateUser){
+            res.status(404).send("No user found with the provided userId");//if no user is found,send a 404 Not Found response
+        }
+        else{
+            res.send({message: "User updated successfully", updateUser}); //sending a success response with the updated user data
+        }
+    }catch(err){
+        res.status(500).send("Internal Server error");
+    }
+})
+
 //feed API - Get /feed all the users from the database
 app.get('/feed', async(req,res)=>{
     const users= await User.find({});
