@@ -49,7 +49,7 @@ app.patch("/user",async(req,res)=>{
     const userId= req.body.userId; // getting the userId
     const updateData=req.body; // getting the data to be updated
     try{
-        const updateUser= await User.findByIdAndUpdate({_id:userId},updateData,{returnDocument:"after"}); //updating the user data and returning the updated document
+        const updateUser= await User.findByIdAndUpdate({_id:userId},updateData,{returnDocument:"after",runValidators:true}); //updating the user data and returning the updated document ,running the validators defined in the schema to ensure that the updated data is valid
         console.log(updateUser);
         if(!updateUser){
             res.status(404).send("No user found with the provided userId");//if no user is found,send a 404 Not Found response
