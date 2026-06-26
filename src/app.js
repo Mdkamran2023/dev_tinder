@@ -45,10 +45,23 @@ app.delete('/user',async(req,res)=>{
 })
 
 //route to update user data based on userId
-app.patch("/user",async(req,res)=>{
-    const userId= req.body.userId; // getting the userId
+app.patch("/user/:userId",async(req,res)=>{
+    const userId= req.params?.userId; // getting the userId from the URL parameters
     const updateData=req.body; // getting the data to be updated
+
+    const userSkills= req.body?.skills?.length || 0; //getting the number of skills in the request body, if skills is not present, set it to 0
+
+    // data sanitization- checking if the keys in the updateData object are allowed to be updated
+    const ALLOWED_UPDATES=["photoUrl","about","gender","age","skills","password"];
+    const updates= Object.keys(updateData); //getting the keys of the updateData object
+    const isValidOperation= updates.every((update)=>ALLOWED_UPDATES.includes(update)); //checking if all the keys in the updateData object are allowed to be updated
+    if(!isValidOperation){
+        return res.send({error: "Invalid updates!"}); //if any of the keys in the updateData object are not allowed to be updated, send an error response
+    }
     try{
+        if(userSkills>8){
+            return res.status(400).send({error: "You can add a maximum of 8 skills!"}); //if the number of skills is more than 8, send an error response
+        }
         const updateUser= await User.findByIdAndUpdate({_id:userId},updateData,{returnDocument:"after",runValidators:true}); //updating the user data and returning the updated document ,running the validators defined in the schema to ensure that the updated data is valid
         console.log(updateUser);
         if(!updateUser){
