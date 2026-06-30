@@ -2,6 +2,8 @@ const express = require("express"); //importing the express module
 const { connectDB } = require("./config/database"); //importing the database configuration file
 const app = express(); //creating an instance of express application
 const { User } = require("./models/user"); //importing the user model
+const { validateSignUpData } = require('./utils/validation');
+const bcrypt=require("bcrypt"); //importing the bcrypt module for password hashing
 
 app.use(express.json()); //middleware to parse incoming JSON requests ,
 //  this allows uss to access the request body as a Javascript object in our route handlers.
@@ -91,11 +93,30 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-app.post("/signup", async (req, res) => {
+app.post("/signup", async (req, res) => { 
   console.log(req.body); //logging the request body to the console for debugging purposes
-  //creating a new user instance using the user model
-  const userInstance = new User(req.body);
+  
   try {
+    // validation of the request body data using the validateSignUpData function from the validation.js file
+    //saving the user instance to the database
+    const { isValid, message } = validateSignUpData(req);
+    if (!isValid) {
+      return res.status(400).send({ error: message });
+    }
+    const {firstName,lastName,emailId, password}=req.body;
+    
+    //encrypt the password before saving it to the database 
+    const saltRounds = 10; //number of salt rounds for hashing the password
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    //creating a new user instance using the user model
+    const userInstance = new User({
+      firstName,
+      lastName,
+      emailId,
+      password:hashedPassword //saving the hashed password to the database instead of the plain text password
+    });
+    
     //saving the user instance to the database
     await userInstance.save();
     res.status(201).send("User created successfully"); //sending a success response

@@ -16,4 +16,6 @@
 * Explore validator Library function and use `validator` function for `password`,`email` ....
 * NEVER TRUST REQ.BODY (IT CAN COME WITH MALICIOUS THINGS)
   
-
+* validate data in SIGNUP API
+* Install bcrypt library
+* Create hashedPassword using bcrypt.hash(password, saltRounds)  and save the user with hashed password
