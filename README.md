@@ -19,3 +19,4 @@
 * validate data in SIGNUP API
 * Install bcrypt library
 * Create hashedPassword using bcrypt.hash(password, saltRounds)  and save the user with hashed password
+* login API and writes authentication code too

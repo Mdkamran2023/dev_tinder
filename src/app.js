@@ -2,8 +2,8 @@ const express = require("express"); //importing the express module
 const { connectDB } = require("./config/database"); //importing the database configuration file
 const app = express(); //creating an instance of express application
 const { User } = require("./models/user"); //importing the user model
-const { validateSignUpData } = require('./utils/validation');
-const bcrypt=require("bcrypt"); //importing the bcrypt module for password hashing
+const { validateSignUpData, validateLoginData } = require("./utils/validation");
+const bcrypt = require("bcrypt"); //importing the bcrypt module for password hashing
 
 app.use(express.json()); //middleware to parse incoming JSON requests ,
 //  this allows uss to access the request body as a Javascript object in our route handlers.
@@ -49,7 +49,14 @@ app.patch("/user/:userId", async (req, res) => {
   const userSkills = req.body?.skills?.length || 0; //getting the number of skills in the request body, if skills is not present, set it to 0
 
   // data sanitization- checking if the keys in the updateData object are allowed to be updated
-  const ALLOWED_UPDATES = [ "photoUrl", "about","gender","age","skills","password",];//defining the allowed keys to be updated
+  const ALLOWED_UPDATES = [
+    "photoUrl",
+    "about",
+    "gender",
+    "age",
+    "skills",
+    "password",
+  ]; //defining the allowed keys to be updated
   const updates = Object.keys(updateData); //getting the keys of the updateData object
   const isValidOperation = updates.every((update) =>
     ALLOWED_UPDATES.includes(update),
@@ -93,9 +100,9 @@ app.get("/feed", async (req, res) => {
   }
 });
 
-app.post("/signup", async (req, res) => { 
+app.post("/signup", async (req, res) => {
   console.log(req.body); //logging the request body to the console for debugging purposes
-  
+
   try {
     // validation of the request body data using the validateSignUpData function from the validation.js file
     //saving the user instance to the database
@@ -103,9 +110,9 @@ app.post("/signup", async (req, res) => {
     if (!isValid) {
       return res.status(400).send({ error: message });
     }
-    const {firstName,lastName,emailId, password}=req.body;
-    
-    //encrypt the password before saving it to the database 
+    const { firstName, lastName, emailId, password } = req.body;
+
+    //encrypt the password before saving it to the database
     const saltRounds = 10; //number of salt rounds for hashing the password
     const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -114,15 +121,37 @@ app.post("/signup", async (req, res) => {
       firstName,
       lastName,
       emailId,
-      password:hashedPassword //saving the hashed password to the database instead of the plain text password
+      password: hashedPassword, //saving the hashed password to the database instead of the plain text password
     });
-    
+
     //saving the user instance to the database
     await userInstance.save();
     res.status(201).send("User created successfully"); //sending a success response
   } catch (err) {
     console.log("Error creating user:", err);
     res.status(500).send("Error creating user"); //sending an error response in case of failure
+  }
+});
+
+app.post("/login", async (req, res) => {
+  try {
+    const { emailId, password } = req.body; //destructuring the request body to get the emailId and password
+    //validation of the request body data using the validateLogindata function from the validateion.js file
+    const { isValid, message } = validateLoginData(req);
+    if (!isValid) {
+      return res.status(400).send({ error: message });
+    }
+    const user = await User.findOne({ emailId: emailId }).exec(); //finding the user in the database based on the emailId
+    if (!user) {
+      return res.status(404).send("Invalid credentials."); //if the user is not found, send a 404 Not Found response
+    }
+    const isPasswordMatched = await bcrypt.compare(password, user.password);
+    if (!isPasswordMatched) {
+      return res.status(401).send("Invalid credentials."); //if the password does not match, send a 401 Unauthorized response
+    }
+    res.status(200).send("User logged in successfully"); //sending a success response
+  } catch (err) {
+    res.status(500).send("Error logging in user" + err.message); //sending an error response in case of failure
   }
 });
 
