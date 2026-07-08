@@ -4,9 +4,16 @@ const app = express(); //creating an instance of express application
 const { User } = require("./models/user"); //importing the user model
 const { validateSignUpData, validateLoginData } = require("./utils/validation");
 const bcrypt = require("bcrypt"); //importing the bcrypt module for password hashing
+const cookieParser= require("cookie-parser"); //importing the cookie-parser module to parse cookies from the request headers
+const jwt= require("jsonwebtoken"); //importing the jsonwebtoken module to create and verify JWT tokens
+
+
 
 app.use(express.json()); //middleware to parse incoming JSON requests ,
-//  this allows uss to access the request body as a Javascript object in our route handlers.
+//  this allows us to access the request body as a Javascript object in our route handlers.
+
+//middleware to parse cookies from the request headers
+app.use(cookieParser()); 
 
 //route to get user data based on emailId
 app.get("/user", async (req, res) => {
@@ -133,6 +140,29 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+app.get("/profile", async(req,res)=>{
+  try{
+  const cookie= req.cookies;
+  console.log(cookie);
+  // validate the JWT token from the cookie and get the user data from the database
+  const {token} = cookie; //destructuring the cookie object to get the token
+  if(!token){
+    return res.status(401).send("Unauthorized access"); //if the token is not present in the cookie, send a 401 Unauthorized response
+  }
+  const decoded= await jwt.verify(token,"DEVMANUS@!@#"); //verifying the JWT token and decoding it to get the user data
+  console.log(decoded); //logging the decoded token to the console for debugging purposes
+  const user = await User.findById(decoded._id).exec(); //finding the user in the database based on the User ID from the decoded token
+
+  console.log(user); //logging the first name of the user to the console for debugging purposes
+  if(!user){
+    return res.status(404).send("User not found"); //if the user is not found, send a 404 Not found response
+  }
+  res.send(user); //sending the user data as a response
+}catch(err){
+  res.status(500).send("Error fetching user data: ", err); //sending an error response in case of failure
+}
+})
+
 app.post("/login", async (req, res) => {
   try {
     const { emailId, password } = req.body; //destructuring the request body to get the emailId and password
@@ -146,6 +176,11 @@ app.post("/login", async (req, res) => {
       return res.status(404).send("Invalid credentials."); //if the user is not found, send a 404 Not Found response
     }
     const isPasswordMatched = await bcrypt.compare(password, user.password);
+    // Create a JWT token for the user and send it in the response header
+    const token= jwt.sign({_id:user._id},"DEVMANUS@!@#");//passing the user id as payload and a secret key to sign the token
+    // Add the token to cookie and send it in the response header
+    console.log(token);
+    res.cookie("token", token);
     if (!isPasswordMatched) {
       return res.status(401).send("Invalid credentials."); //if the password does not match, send a 401 Unauthorized response
     }

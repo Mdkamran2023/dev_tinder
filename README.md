@@ -20,3 +20,12 @@
 * Install bcrypt library
 * Create hashedPassword using bcrypt.hash(password, saltRounds)  and save the user with hashed password
 * login API and writes authentication code too
+
+
+* install cookie-parser
+* just send a dummy cookie to user
+* create GET /profile API and check if you get the cookie back
+* install jsonwebtoken
+* IN /login API, after email and password validation, create a JWT token and send it to user in cookies 
+* read the cookies inside your profile API find the logged in USER
+* 
