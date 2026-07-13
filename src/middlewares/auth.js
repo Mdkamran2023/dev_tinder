@@ -1,4 +1,4 @@
-const jwt = require("jssonwebtoken");
+const jwt = require("jsonwebtoken");
 const {User} = require("../models/user");
 const userAuth=async(req,res,next)=>{
     try{
@@ -9,7 +9,7 @@ const userAuth=async(req,res,next)=>{
     if(!token){
         return res.status(401).json({message: "Unauthorized: No token provided .. Login to access this resource"});
     }
-    const decoded= await jwt.verify(token,"DEVMANUS@123");
+    const decoded= await jwt.verify(token,"DEVMANUS@!@#");
     //check if the user exists in the database
     const user= await User.findById(decoded._id); 
     if(!user){
