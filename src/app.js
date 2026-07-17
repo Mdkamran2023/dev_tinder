@@ -174,9 +174,9 @@ app.post("/login", async (req, res) => {
     if (!user) {
       return res.status(404).send("Invalid credentials."); //if the user is not found, send a 404 Not Found response
     }
-    const isPasswordMatched = await bcrypt.compare(password, user.password);
+    const isPasswordMatched = await user.validatePassword(password);
     // Create a JWT token for the user and send it in the response header
-    const token= jwt.sign({_id:user._id},"DEVMANUS@!@#",{expiresIn:"1d"});//passing the user id as payload and a secret key to sign the token and setting the token to expire in 1 day
+    const token= await user.getJWTToken(); //passing the user id as payload and a secret key to sign the token and setting the token to expire in 1 day
     // Add the token to cookie and send it in the response header
     console.log(token);
     res.cookie("token", token,{expires: new Date(Date.now()+ 24*60*60*1000)}); //setting the cookie to expire in 1 day

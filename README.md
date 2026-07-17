@@ -31,3 +31,5 @@
 * userAuth Middleware
 * Add the userAuth middleware in profile API and a new sendConnectionRequest API
 * set thr expiry of JWT token and cookies ..
+* create userSchema method to getJWT()
+* create userSchema method to comparepassword(passwordInputByUser)
