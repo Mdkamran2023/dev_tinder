@@ -33,3 +33,13 @@
 * set thr expiry of JWT token and cookies ..
 * create userSchema method to getJWT()
 * create userSchema method to comparepassword(passwordInputByUser)
+
+
+
+* Explore tinder APIs
+* Create a list of all API u can think of in Dev Tinder
+* Group multiple routes under respective routers
+* Read documentation for express.Router
+* Create routes folder for managing auth,profile, request routers
+* create authRouter, profileRouter, requestRouter
+* import these routers in app.js

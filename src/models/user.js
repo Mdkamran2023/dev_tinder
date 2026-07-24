@@ -68,17 +68,16 @@ const userSchema= new mongoose.Schema({
 },{timestamps:true});
  
 userSchema.methods.getJWTToken = async function(){ //didn't use arrow function because we can't access this without it
-    const user =this;
-    const token = await jwt.sign({_id:user._id},"DEVMANUS@!@#",{expiresIn:"1d"})
-;
-
+    const user =this; 
+    const token = await jwt.sign({_id:user._id},"DEVMANUS@!@#",{expiresIn:"1d"});
+//passing the user id as payload and a secret key to sign the token and setting the token to expire in 1 day
+    // Add the token to cookie and send it in the response header
 return token;}
 
 userSchema.methods.validatePassword = async function(passwordInputByUser){
     const user =this;
     const hashedPassword = user.password;
     const isPasswordValid= await bcrypt.compare(passwordInputByUser,hashedPassword);
-
     return isPasswordValid;
 }
 
