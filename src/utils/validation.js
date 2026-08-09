@@ -58,6 +58,15 @@ const validateLoginData =(req)=>{
     }
 }
 
-module.exports={validateSignUpData, validateLoginData};
+const validateUpdatedData=(req)=>{
+    console.log(req.body);
+    // add validation logic for the updated data here
+    const  allowedEditFields= ['firstName', 'lastName', 'photoUrl','emailId', 'age', 'gender', 'about', 'skills'];
+    const isEditAllowed = Object.keys(req.body).every((field) => allowedEditFields.includes(field));
+
+    return isEditAllowed;
+}
+
+module.exports={validateSignUpData, validateLoginData, validateUpdatedData};
 
 
