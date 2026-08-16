@@ -47,3 +47,12 @@
 * create PATCH /profile/edit 
 * create PATCH /profile/password API=>forgot password API
 * Validate all data in every POST, PATCH APIS
+  
+
+* create connectionRequestSchema
+* send connectionRequest API 
+* proper data validation and also add corner cases
+* $or query in mongoose
+* read more about indexs and compound indexes
+* need of indexes and advantages and disadvantages
+   
