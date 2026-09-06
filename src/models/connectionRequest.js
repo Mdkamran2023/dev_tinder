@@ -1,8 +1,10 @@
 const mongoose= require("mongoose");
+const {User}= require("./user");
 
 const connectionRequestSchema = new mongoose.Schema({
     fromUserId:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:'User', //reference to the User model, this allows us to populate the user details when fetching connection requests
         required:true,
     },
     toUserId:{

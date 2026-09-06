@@ -57,3 +57,6 @@
 * need of indexes and advantages and disadvantages
    
 * make an API /request/review/:status/:requestId and also validate it..
+* thought process- POST vs GET
+* Read about ref and populate
+* create GET /user/requests/received with all checks

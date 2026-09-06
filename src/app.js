@@ -5,7 +5,8 @@ const cookieParser= require("cookie-parser"); //importing the cookie-parser modu
 
 const authRouter= require("./routers/auth"); //importing the auth router
 const profileRouter= require("./routers/profile"); //importing the profile router
-const requestsRouter= require("./routers/requests"); //importing the requests router  
+const requestsRouter= require("./routers/requests"); //importing the requests router 
+const {userRouter} = require("./routers/user"); //importing the user router
 
 
 
@@ -18,6 +19,7 @@ app.use(cookieParser());
 app.use("/", authRouter); //using the auth router for all routes starting with /auth
 app.use("/", profileRouter); //using the profile router for all routes starting with /profile
 app.use("/", requestsRouter); //using the requests router for all routes starting with /requests  
+app.use("/", userRouter); //using the user router for all routes starting with /user
 
 
 // after creating the express app, we need to connect to the database before strating the server.
