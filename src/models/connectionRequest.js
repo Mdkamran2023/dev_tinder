@@ -9,6 +9,7 @@ const connectionRequestSchema = new mongoose.Schema({
     },
     toUserId:{
         type:mongoose.Schema.Types.ObjectId,
+        ref:'User', //reference to the User model, this allows us to populate the user details when fetching connection requests
         required:true,
     },
     status:{

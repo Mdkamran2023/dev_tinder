@@ -60,3 +60,4 @@
 * thought process- POST vs GET
 * Read about ref and populate
 * create GET /user/requests/received with all checks
+* create GET /user/connections --says who is in my connection only
